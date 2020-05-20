@@ -31,7 +31,7 @@ class ElasticReader:
             }}
 
         ids = set()
-        for result in elasticsearch.helpers.scan(self.elastic, index=self.es_index, query=query):
+        for result in elasticsearch.helpers.scan(self.elastic, index=self.es_index, query=query, request_timeout=2):
             tid = result['_source']['@fields']['tweet_id']
             ids.add(tid)
 

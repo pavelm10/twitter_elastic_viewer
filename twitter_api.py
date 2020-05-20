@@ -10,7 +10,7 @@ from helpers import simple_logger
 
 class TwitterApi(tweepy.streaming.StreamListener):
 
-    def __init__(self, auth_path_json, es_index, es_search_date, logstash_port=41000, max_tweets=3200):
+    def __init__(self, auth_path_json, es_index, es_search_date, es_port=9200, logstash_port=41000, max_tweets=3200):
         super().__init__()
 
         with open(auth_path_json, 'r') as f:
@@ -27,7 +27,7 @@ class TwitterApi(tweepy.streaming.StreamListener):
 
         self.log = simple_logger()
         self.stash = self.setup_stash()
-        self.es_reader = ElasticReader(es_index=es_index)
+        self.es_reader = ElasticReader(es_index=es_index, es_port=es_port)
         self.stream = tweepy.Stream(auth=self.api.auth, listener=self)
 
         self.all_ids = self.es_reader.read_all_ids(self.search_start)
