@@ -143,6 +143,9 @@ if __name__ == "__main__":
     argp.add_argument('--logstash-port',
                       dest='logstash_port',
                       default=41000)
+    argp.add_argument('--es-port',
+                      dest='es_port',
+                      default=9200)
     argp.add_argument('--start-date',
                       dest='start_date',
                       required=True)
@@ -157,7 +160,7 @@ if __name__ == "__main__":
 
     args = argp.parse_args()
 
-    tapi = TwitterApi(args.auth_json, args.index, args.start_date, args.logstash_port, args.max_tweets)
+    tapi = TwitterApi(args.auth_json, args.index, args.start_date, args.es_port, args.logstash_port, args.max_tweets)
 
     if args.stream:
         tapi.update_latest()

@@ -1,3 +1,5 @@
+import elasticsearch
+
 from elasticsearch_reader import ElasticReader
 
 
@@ -5,6 +7,7 @@ if __name__ == "__main__":
     import argparse
 
     argp = argparse.ArgumentParser()
+
     argp.add_argument('--es-port',
                       dest='es_port',
                       help='elasticsearch server port',
@@ -24,5 +27,10 @@ if __name__ == "__main__":
     args = argp.parse_args()
 
     es_reader = ElasticReader(args.es_host, args.es_port, args.es_index)
-    ids = es_reader.read_all_ids(args.date)
-    assert len(ids) > 0
+    try:
+        ids = es_reader.read_all_ids(args.date)
+        print("ES CONNECTION TEST: OK")
+
+    except (elasticsearch.ConnectionError, elasticsearch.ConnectionTimeout) as ex:
+        print("ES CONNECTION TEST: NOK")
+        raise ex
