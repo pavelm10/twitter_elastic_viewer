@@ -7,7 +7,7 @@ from elasticsearch_reader import ElasticReader
 from helpers import simple_logger
 
 
-class TwitterApi(tweepy.streaming.StreamListener):
+class TwitterCrawler(tweepy.streaming.StreamListener):
 
     def __init__(self, auth_path_json, es_index, es_search_date, es_port=9200, logstash_port=41000, max_tweets=3200):
         super().__init__()
@@ -148,10 +148,10 @@ if __name__ == "__main__":
 
     args = argp.parse_args()
 
-    tapi = TwitterApi(args.auth_json, args.index, args.start_date, args.es_port, args.logstash_port, args.max_tweets)
+    crawler = TwitterCrawler(args.auth_json, args.index, args.start_date, args.es_port, args.logstash_port, args.max_tweets)
 
     if args.stream:
-        tapi.update_latest()
-        tapi.streaming()
+        crawler.update_latest()
+        crawler.streaming()
     else:
-        tapi.build_history()
+        crawler.build_history()
