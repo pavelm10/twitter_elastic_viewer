@@ -63,9 +63,11 @@ class TwitterApi(tweepy.streaming.StreamListener):
             max_id = self.process_my_timeline(max_id=max_id)
 
     def update_latest(self):
-        upto_id = 0
         if len(self.all_ids) > 0:
             upto_id = max(self.all_ids)
+        else:
+            self.log.info('No data in the database...')
+            return
 
         self.log.info('Updating latest tweets')
         max_id = self.process_my_timeline()
