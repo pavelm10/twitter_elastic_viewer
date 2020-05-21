@@ -1,6 +1,5 @@
 import logging
 import json
-import time
 import tweepy
 from logstash import UDPLogstashHandler
 
@@ -41,10 +40,8 @@ class TwitterApi(tweepy.streaming.StreamListener):
         self.process_tweet(status)
 
     def get_following(self):
-        following_ids = set()
         self.log.info('Getting list of the following users')
-        for friend in self._robust(tweepy.Cursor(self.api.friends).items()):
-            following_ids.add(friend.id_str)
+        following_ids = {friend.id_str for friend in tweepy.Cursor(self.api.friends).items()}
         return following_ids
 
     def setup_stash(self):
@@ -116,17 +113,6 @@ class TwitterApi(tweepy.streaming.StreamListener):
 
             self.all_ids.add(tweet.id)
             self.processed_tweets += 1
-
-    def _robust(self, cursor):
-        while True:
-            try:
-                yield cursor.next()
-            except (tweepy.RateLimitError, tweepy.error.TweepError):
-                self.log.warning('Hit the Rate Limit or some other error, sleeping for 15 minutes and some seconds')
-                time.sleep(15.2 * 60)
-
-            except StopIteration:
-                return
 
     def validate_tweet(self, tweet):
         valid = True

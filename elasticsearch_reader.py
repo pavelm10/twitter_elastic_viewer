@@ -30,9 +30,6 @@ class ElasticReader:
                 }
             }}
 
-        ids = set()
-        for result in elasticsearch.helpers.scan(self.elastic, index=self.es_index, query=query, request_timeout=2):
-            tid = result['_source']['@fields']['tweet_id']
-            ids.add(tid)
-
-        return ids
+        query_gen = elasticsearch.helpers.scan(self.elastic, index=self.es_index, query=query, request_timeout=2)
+        tweet_ids = {result['_source']['@fields']['tweet_id'] for result in query_gen}
+        return tweet_ids
