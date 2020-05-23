@@ -103,13 +103,19 @@ class TwitterCrawler(tweepy.streaming.StreamListener):
     def process_tweet(self, tweet):
         if self.validate_tweet(tweet):
             url = tweet.entities['urls'][0]['expanded_url'] if len(tweet.entities['urls']) else ''
+            date = self.convert2datetime(tweet._json['created_at'])
             out = {'tweet_id': tweet.id,
                    'tweet_text': tweet._json['text'],
                    'tweet_url': url,
                    'tweet_user_id': tweet.user.id,
                    'tweet_user_screen_name': tweet.user.screen_name,
                    'tweet_time_creation': tweet._json['created_at'],
-                   'tweet_time_creation_date': self.convert2datetime(tweet._json['created_at']),
+                   'tweet_year': int(date.year),
+                   'tweet_month': int(date.month),
+                   'tweet_day': int(date.day),
+                   'tweet_hour': int(date.hour),
+                   'tweet_minute': int(date.minute),
+                   'tweet_second': int(date.second),
                    'tweet_location': tweet._json.get('location')}
 
             self.log.info(f'Stashing: {out}')
@@ -129,7 +135,6 @@ class TwitterCrawler(tweepy.streaming.StreamListener):
         splitted.remove("+0000")
         time_string = " ".join(splitted)
         date = datetime.datetime.strptime(time_string, "%a %b %d %H:%M:%S %Y")
-        date = datetime.datetime.strftime(date, "%Y-%m-%dT%H:%M:%S")
         return date
 
 
