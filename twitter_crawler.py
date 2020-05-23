@@ -34,6 +34,7 @@ class TwitterCrawler(tweepy.streaming.StreamListener):
 
     def on_error(self, status_code):
         if status_code == 420:
+            self.log.warning('status code 420, too many requests, disconnecting streaming...')
             return False
 
     def on_status(self, status):
@@ -74,7 +75,8 @@ class TwitterCrawler(tweepy.streaming.StreamListener):
     def streaming(self):
         self.log.info('Starting streaming')
         if self.following_uids:
-            self.stream.filter(follow=self.following_uids, is_async=True)
+            self.stream.filter(follow=self.following_uids)
+            self.log.info('Streaming finished')
         else:
             self.log.error('The list of friends is empty')
 
