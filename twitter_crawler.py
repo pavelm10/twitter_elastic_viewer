@@ -1,5 +1,6 @@
 import logging
 import json
+import datetime
 import tweepy
 from logstash import UDPLogstashHandler
 
@@ -108,6 +109,7 @@ class TwitterCrawler(tweepy.streaming.StreamListener):
                    'tweet_user_id': tweet.user.id,
                    'tweet_user_screen_name': tweet.user.screen_name,
                    'tweet_time_creation': tweet._json['created_at'],
+                   'tweet_time_creation_date': self.convert2datetime(tweet._json['created_at']),
                    'tweet_location': tweet._json.get('location')}
 
             self.log.info(f'Stashing: {out}')
@@ -121,6 +123,14 @@ class TwitterCrawler(tweepy.streaming.StreamListener):
         valid &= tweet.id not in self.all_ids
         valid &= tweet.user.id_str in self.following_uids
         return valid
+
+    def convert2datetime(self, time_string):
+        splitted = time_string.split(" ")
+        splitted.remove("+0000")
+        time_string = " ".join(splitted)
+        date = datetime.datetime.strptime(time_string, "%a %b %d %H:%M:%S %Y")
+        date = datetime.datetime.strftime(date, "%Y-%m-%dT%H:%M:%S")
+        return date
 
 
 if __name__ == "__main__":
