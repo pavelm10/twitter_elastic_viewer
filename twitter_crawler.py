@@ -65,7 +65,7 @@ class TwitterCrawler(tweepy.streaming.StreamListener):
         if len(self.all_ids) > 0:
             upto_id = max(self.all_ids)
         else:
-            self.log.info('No data in the database...')
+            self.log.warning('No data in the database...')
             return
 
         self.log.info('Updating latest tweets')
