@@ -33,8 +33,8 @@ class ElasticReader:
             }}
 
         try:
-            query_gen = elasticsearch.helpers.scan(self.elastic, index=self.es_index, query=query, request_timeout=2)
-            tweet_ids = {result['_source']['@fields']['tweet_id'] for result in query_gen}
+            query_gen = elasticsearch.helpers.scan(self.elastic, index=self.es_index, query=query, request_timeout=5)
+            tweet_ids = {result['_source']['tweet_id'] for result in query_gen}
             return tweet_ids
 
         except (elasticsearch.ConnectionError, elasticsearch.ConnectionTimeout) as ex:

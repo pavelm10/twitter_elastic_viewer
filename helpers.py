@@ -25,3 +25,18 @@ def simple_logger(logger_name='root'):
     log.addHandler(file_handler)
 
     return log
+
+
+def filebeat_stash(logger_name='stash', output_dir=None):
+    output_dir.mkdir(parents=True, exist_ok=True)
+    output_file = output_dir / 'filbeat_stash.log'
+    log = logging.getLogger(logger_name)
+    log.setLevel(logging.INFO)
+    formatter = logging.Formatter('%(message)s')
+    file_handler = RotatingFileHandler(output_file.as_posix(), maxBytes=5242880, backupCount=5)
+    file_handler.setFormatter(formatter)
+    file_handler.setLevel(logging.INFO)
+    log.addHandler(file_handler)
+
+    return log
+
